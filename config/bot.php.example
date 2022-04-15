@@ -1,0 +1,47 @@
+<?php
+  /**
+   * General bot settings controlling its behavior
+   */
+  // Bot timezome setting and current date (Y-m-d). This is just in case it's needed in the future.
+  date_default_timezone_set('America/Chicago');
+  $today = date('Y-m-d');
+  $timeAtRun = date('Y-m-d H:i:s');
+  $queryLookbackUpTo = "-2 hours";
+  $queryKeywords = "#MMSMOA OR @mmsmoa";
+  /**
+   * Authorization Keys for Twitter App and bot account
+   * 
+   * These values are generated and managed in the developer app interface.
+   * 
+   * Twitter User/Bot Token/Secret/Name
+   *  API Key == Consumer Key
+   *  API Key Secret == Consumer Key Secret
+   */
+  $twitterApiKey='FFEEDDCCBBAA';
+  $twitterApiKeySecret='998877665544';
+  $twitterBearerToken='AABBCCDDEEFF99887766554433221100';
+
+  // OAuth2 Client ID and Secret -- These are generated and managed in the developer app interface.
+  $oauth2Id='CCDDEEFF001122334455';
+  $oauth2Secret='998877665544AABBCCDDEE';
+
+  // Authentication Tokens - Generate with Twurl or other three-legged OAuth process. Look up the accountId via Postman or whatever mechanism is simplest for you.
+  $authToken='112233445566';
+  $authToken_secret='778899AABBCC';
+  $authToken_account='botname';
+  $authToken_accountId='112233445566';
+
+  // Twitter REST v2 Endpoints
+  $twitterUserIdLookupEndpoint = 'https://api.twitter.com/2/users/by';
+  $twitterSearchEndpoint = 'https://api.twitter.com/2/tweets/search/recent';
+  $twitterLikeEndpoint = 'https://api.twitter.com/2/users/'.$authToken_accountId.'/likes';
+  $twitterTweetEndpoint = 'https://api.twitter.com/2/tweets';
+  $twitterRetweetEndpoint = 'https://api.twitter.com/2/users/'.$authToken_accountId.'/retweets';
+
+  // Bot Query Defaults (see https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query)
+  $twitterQueryDefaults = array('start_time'=>date('Y-m-d\TH:i:s\Z', strtotime($queryLookbackUpTo)),'max_results'=>50,'tweet.fields'=>'reply_settings,created_at','expansions'=>'author_id','user.fields'=>'name,username,protected','sort_order'=>'recency','query'=>'('.$queryKeywords.') -is:retweet -is:reply -is:quote -from:mmsmoa');
+
+  // Tweet Interval/Retweet Data Files
+  $tweetIntervalFile = __DIR__ . '/tweetInterval.php';
+  $tweetDataFile = __DIR__ . '/retweetData.php';
+?>
