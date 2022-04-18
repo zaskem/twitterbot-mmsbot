@@ -5,7 +5,7 @@
   // Bot timezome setting and current date (Y-m-d). This is just in case it's needed in the future.
   date_default_timezone_set('America/Chicago');
   $today = date('Y-m-d');
-  $timeAtRun = date('Y-m-d H:i:s');
+  $timeAtRun = time();
   $queryLookbackUpTo = "-2 hours";
   $queryKeywords = "#MMSMOA OR @mmsmoa";
   /**
@@ -39,7 +39,7 @@
   $twitterRetweetEndpoint = 'https://api.twitter.com/2/users/'.$authToken_accountId.'/retweets';
 
   // Bot Query Defaults (see https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query)
-  $twitterQueryDefaults = array('start_time'=>date('Y-m-d\TH:i:s\Z', strtotime($queryLookbackUpTo)),'max_results'=>50,'tweet.fields'=>'reply_settings,created_at','expansions'=>'author_id','user.fields'=>'name,username,protected','sort_order'=>'recency','query'=>'('.$queryKeywords.') -is:retweet -is:reply -is:quote -from:mmsmoa');
+  $twitterQueryDefaults = array('start_time'=>date('Y-m-d\TH:i:s\Z', strtotime($queryLookbackUpTo)),'max_results'=>60,'tweet.fields'=>'reply_settings,created_at','expansions'=>'author_id','user.fields'=>'name,username,protected','sort_order'=>'recency','query'=>'('.$queryKeywords.') -is:retweet -is:reply -is:quote -from:mmsmoa');
 
   // Tweet Interval/Retweet Data Files
   $tweetIntervalFile = __DIR__ . '/tweetInterval.php';
