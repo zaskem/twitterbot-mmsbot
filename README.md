@@ -34,13 +34,19 @@ Edit the `bot.php` file as necessary for your configuration.
 The bot process has been designed to run on an interval to search Twitter. The bot then evaluates recent original tweets, grabs a random (not previously retweeted) tweet, likes, and retweets the selection via the simple command:
 `php LikeAndRetweet.php`
 
-The bot is also designed to "self-meter" its own volume of retweets. It will adjust the "next retweet" interval based on the volume of tweets from the previous 1-2 hours. This basically means if tweet volume is low (e.g. 4 tweets in the last 2 hours) it would only retweet 1 time in about the same interval. However, if tweet volume is high (e.g. 10 tweets in the last 15 minutes), it would retweet once every 5 minutes.
+The bot is also designed to "self-meter" its own volume of retweets. It will adjust the "next retweet" interval based on the volume of tweets from the previous 1-2 hours (as set in `bot.php`). This basically means if tweet volume is low (e.g. 4 tweets in the last 2 hours) it would only attempt to retweet 1 time in about the same interval. However, if tweet volume is high (e.g. 10 tweets in the last 15 minutes), it would attempt to retweet once every 5 minutes.
 
 Cron should be used for production. A simple default crontab setting might look like this:
 ```bash
 */5 * * * * /path/to/php /path/to/LikeAndRetweet.php
 ```
 The above will run the bot script every 5 minutes, a responsibly-appropriate interval for such a bot.
+
+A cleanup script (`CleanupOldTweets.php`) is included to purge the retweet history cache of tweets that are at least 4-6 days old. This cleanup is not required (Twitter search only goes back a maximum of 7 days), but not cleaning up on some interval could cause the history file to grow in unexpected ways. A simple daily cron job to purge the data is sufficient; however ___it is important to note the cleanup job should not run concurrently with the `LikeAndRetweet.php` job___ due to potential file locking:
+```bash
+2 3 * * * /path/to/php /path/to/CleanupOldTweets.php
+```
+The above will purge the history daily at 3:02 a.m.
 
 ## Troubleshooting and Tweet Posting
 This bot doesn't have a lot of moving parts, so there's not a lot to troubleshoot. There are two general points of failure:
