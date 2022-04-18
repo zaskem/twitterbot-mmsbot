@@ -6,6 +6,7 @@
   date_default_timezone_set('America/Chicago');
   $today = date('Y-m-d');
   $timeAtRun = time();
+  // Lookback period -- Intended to be of an "hours" unit (e.g. -2 hours)
   $queryLookbackUpTo = "-2 hours";
   $queryKeywords = "#MMSMOA OR @mmsmoa";
   /**
