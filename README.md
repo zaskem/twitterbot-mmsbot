@@ -1,9 +1,9 @@
-# Twitter "MMS MOA" Bot
+# MMSMOA Twitter Bot
 A [novelty bot](https://twitter.com/mmsmoabot) written in PHP to awareness- and exposure-retweet recent original tagged content (at random) related to the [MMSMOA conference](https://mmsmoa.com/).
 
 Original content is sourced from the [Twitter API v2 Search Recent Tweets](https://developer.twitter.com/en/docs/twitter-api/tweets/search/introduction) API endpoint via selective query parameters.
 
-This bot is not designed to like/retweet every original tweet it finds. It will instead select one at random from recent activity. The designed target is to catch every third or fourth tweet so as to be interesting enough (as a mechanism) but not simply a filtered stream of all matches (folks can do their own searches for that).
+This bot is not designed to like/retweet every original tweet it finds. It will instead select one at random from recent activity. The designed target is to catch every third or fourth tweet so as to be interesting enough (as a mechanism) but not simply a filtered stream of all matches (folks can do their own searches for that). The [Bot's website](https://mmsbot.mzonline.com/) has additional information about its intent.
 
 ## Requirements
 To run the bot code, the following libraries/accounts/things are required:
@@ -54,5 +54,7 @@ This bot doesn't have a lot of moving parts, so there's not a lot to troubleshoo
 * Failure to obtain data from Twitter; and
 * Failure to post a like/retweet.
 
-## Contributors
-Developed as an opportunity to use Twitter's v2 API over a few lazy afternoons as a novelty bot/project by [@zaskem](https://github.com/zaskem). Public release was in advance of MMS (at MOA) 2022.
+## Contributors/Acknowledgements
+Developed as an opportunity to use Twitter's v2 API over a few lazy afternoons as a novelty bot/project by [@zaskem](https://github.com/zaskem)/[@matt_zaske](https://twitter.com/matt_zaske).
+
+Public release was in advance of MMS (at MOA) 2022 and is not officially associated with [MMSMOA](https://mmsmoa.com/).
