@@ -6,10 +6,6 @@
   }
 
 
-  // First Retrieve Tweets...
-  $tweetDataResults = searchTweets();
-
-  
   // Load the interval data file (or create one)...
   if (file_exists($tweetIntervalFile)) {
     $nextRetweetAt = include($tweetIntervalFile);
@@ -21,6 +17,9 @@
 
   // If we've reached the cadence interval (auto-metering) proceed with a like/retweet
   if (time() >= $nextRetweetAt) {
+    // Retrieve Tweets...
+    $tweetDataResults = searchTweets();
+    $tweetResultCount = false;
     // We only do something if any results are returned...
     if (false !== $tweetDataResults) {
       $tweetResultCount = $tweetDataResults['meta']['result_count'];
@@ -53,11 +52,14 @@
         }
       }
     }
+  } else {
+    // We just grab the tweet count for the production query (to auto-meter)
+    $tweetResultCount = countTweets();
   }
 
 
   // Determine and update the next cadence interval (auto-metering)
-  $cadenceInterval = determineCadenceInterval($tweetDataResults);
+  $cadenceInterval = determineCadenceInterval($tweetResultCount);
 
   // Update if previous interval passed or we notice more tweets than before
   if (($cadenceInterval <= $nextRetweetAt) || (time() > $nextRetweetAt)) {
@@ -146,7 +148,7 @@
 
 
   /**
-   * determineCadenceInterval($tweetSearchResults) - calculate the cadence for the next like/retweet interval
+   * determineCadenceInterval($tweetResultCount) - calculate the cadence for the next like/retweet interval
    * 
    * This function "calculates" the earliest point (based on tweet history) at which
    *  we might expect at least three tweets to be available. If no recent history is
@@ -154,25 +156,25 @@
    *  timestamp. This helps keep the bot from attempting to find unused tweets during
    *  quieter times.
    * 
-   * $tweetSearchResults - array of results from the `searchTweets()` API function
+   * $tweetResultCount - integer of recent search result count
+   *  (`total_tweet_count`, `result_count` meta data, or boolean false for no results)
    * 
    * @return timestamp of the next like/retweet interval
    */
-  function determineCadenceInterval($tweetSearchResults) {
+  function determineCadenceInterval($tweetResultCount) {
     global $queryLookbackUpTo, $timeAtRun;
     $lookbackTimestamp = strtotime($queryLookbackUpTo);
     $lookbackInterval = $timeAtRun - $lookbackTimestamp;
   
     // Set cadence interval to lookback time since no results were returned in the lookback timeframe
-    if (false === $tweetSearchResults) {
+    if (false === $tweetResultCount) {
       $nextTweetAt = $timeAtRun + $lookbackInterval;
     } else {
-      $tweetResultCount = $tweetSearchResults['meta']['result_count'];
       /**
        * We want to tweet when we might expect three tweets are in the queue, so tweet next in (minutes):
        * 
        * 3 * (($lookbackInterval / 60) / $tweetResultCount);
-       */      
+       */
         $nextTweetAt = round($timeAtRun + (3*(($lookbackInterval/60)/$tweetResultCount))*60);
     }
     return $nextTweetAt;

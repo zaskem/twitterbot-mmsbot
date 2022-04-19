@@ -88,7 +88,7 @@
    * 
    * $needles: array of query parameters to override from the default set (set in `bot.php`), default null
    *
-   * @return integer of `total_tweet_count` from provided query; boolean false for error
+   * @return integer of `total_tweet_count` from provided query; boolean false for error/empty result set
    */
   function countTweets(array $needles = null) {
     global $twitterBearerToken, $twitterCountEndpoint, $twitterQueryDefaults;
@@ -136,6 +136,8 @@
     $results = json_decode($json, true);
 
     if (array_key_exists("errors", $results)) {
+      return false;
+    } else if (0 == $results['meta']['total_tweet_count']) {
       return false;
     } else {
       return $results['meta']['total_tweet_count'];
