@@ -84,6 +84,66 @@
 
 
   /**
+   * countTweets(array $needles = null) - count of tweets from query
+   * 
+   * $needles: array of query parameters to override from the default set (set in `bot.php`), default null
+   *
+   * @return integer of `total_tweet_count` from provided query; boolean false for error
+   */
+  function countTweets(array $needles = null) {
+    global $twitterBearerToken, $twitterCountEndpoint, $twitterQueryDefaults;
+
+    // Add overridden search needles if provided
+    if (!is_null($needles)) {
+      $twitterQueryDefaults = array_merge($twitterQueryDefaults, $needles);
+    }
+
+    $flattenedArgs = '';
+    $argKeys = array_keys($twitterQueryDefaults);
+    $lastKey = end($argKeys);
+    foreach ($twitterQueryDefaults as $key=>$value) {
+      if ('query' == $key) {
+        $flattenedArgs .= $key . "=" . rawurlencode($value);
+      } else {
+        $flattenedArgs .= $key . "=" . $value;
+      }
+      if ($key != $lastKey) {
+        $flattenedArgs .= "&";
+      }
+    }
+    $countEndpointWithArgs = $twitterCountEndpoint . '?' . $flattenedArgs;
+
+    $curl_header = array("Authorization: Bearer $twitterBearerToken");
+
+    // Create/Submit cURL request
+    $curl_request = curl_init();
+    curl_setopt_array($curl_request, array(
+      CURLOPT_URL => $countEndpointWithArgs,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_SSL_VERIFYPEER => true,
+      CURLOPT_ENCODING => '',
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => 'GET',
+      CURLOPT_HTTPHEADER => $curl_header
+    ));
+
+    $json = curl_exec($curl_request);
+    curl_close($curl_request);
+
+    $results = json_decode($json, true);
+
+    if (array_key_exists("errors", $results)) {
+      return false;
+    } else {
+      return $results['meta']['total_tweet_count'];
+    }
+  }
+
+
+  /**
    * likeTweet($tweetId) - retweet $tweetId
    * 
    * $tweetId: Twitter's unique id of the parent/source tweet 
