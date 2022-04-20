@@ -11,7 +11,7 @@
     $tweetHistoryData = include($tweetDataFile);
 
     // Find tweets 4-6 days old
-    $overrideValues = array('start_time'=>date('Y-m-d\TH:i:s\Z', strtotime('-6 days')),'end_time'=>date('Y-m-d\TH:i:s\Z', strtotime('-4 days')),'max_results'=>10);
+    $overrideValues = array('start_time'=>gmdate('Y-m-d\TH:i:s\Z', strtotime('-6 days')),'end_time'=>gmdate('Y-m-d\TH:i:s\Z', strtotime('-4 days')),'max_results'=>10);
     $tweetDataResults = searchTweets($overrideValues);
 
     // If we have any matches in that timeframe, grab the first and use it as our reference tweet
