@@ -143,7 +143,7 @@
       return false;
     }
 
-    
+
     // All of the "fail point" checks have passed, so we have selected a winning tweet!
 
     // Auto-Follow User (if enabled)
@@ -155,7 +155,7 @@
       $followingData = include($followingDataFile);
       // If bot is not already following user, do so (and quietly proceed if follow action fails)...
       if (!in_array($authorId, $followingData)) {
-        $followAction = followUser($twitterUserId);
+        $followAction = followUser($authorId);
         if ($followAction) {
           $followingData[] = $authorId;
           file_put_contents($followingDataFile, '<?php return ' . var_export($followingData, true) . '; ?>');
