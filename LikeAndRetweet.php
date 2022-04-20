@@ -34,7 +34,7 @@
       // Select a random tweet from the result set (try up to $tweetResultCount times)
       $lookupAttempt = 0;
       while ($lookupAttempt <= $tweetResultCount) {
-        $selectedTweet = getRandomTweet($tweetDataResults);
+        $selectedTweet = getRandomTweet($tweetDataResults, $autoFollow);
         if (false !== $selectedTweet) {
           break;
         } else {
@@ -91,7 +91,7 @@
 
 
   /**
-   * getRandomTweet($tweetSearchResults) - pick a valid and yet unused tweet from $tweetSearchResults
+   * getRandomTweet($tweetSearchResults, $autoFollowUser = false) - pick a valid and yet unused tweet from $tweetSearchResults
    * 
    * Function randomly selects a valid/unused tweet from search results based on:
    *  - Tweet has not previously been retweeted by the bot;
@@ -100,12 +100,13 @@
    *  - [Not Implemented] Original tweeting user has not restricted who can reply.
    * 
    * $tweetSearchResults - array of results from the `searchTweets()` API function
+   * $autoFollowUser - boolean (default false) to auto-follow the tweet author (if not already)
    * 
    * @return boolean false (if randomly selected tweet is not usable/valid)
    * @return string/integer of a valid Tweet ID
    */
-  function getRandomTweet($tweetSearchResults) {
-    global $tweetHistoryData, $tweetResultCount;
+  function getRandomTweet($tweetSearchResults, $autoFollowUser = false) {
+    global $tweetHistoryData, $tweetResultCount, $followingDataFile;
     $randoTweet = rand(0, $tweetResultCount - 1);
 
     // Tweet Details
@@ -140,6 +141,26 @@
     // Has Tweet Already Been Used
     if (in_array($tweetId, $tweetHistoryData)) {
       return false;
+    }
+
+    
+    // All of the "fail point" checks have passed, so we have selected a winning tweet!
+
+    // Auto-Follow User (if enabled)
+    if ($autoFollowUser) {
+      // Load the bot's following data file (or create/populate one)...
+      if (!file_exists($followingDataFile)) {
+        generateFollowingDataFile();
+      }
+      $followingData = include($followingDataFile);
+      // If bot is not already following user, do so (and quietly proceed if follow action fails)...
+      if (!in_array($authorId, $followingData)) {
+        $followAction = followUser($twitterUserId);
+        if ($followAction) {
+          $followingData[] = $authorId;
+          file_put_contents($followingDataFile, '<?php return ' . var_export($followingData, true) . '; ?>');
+        }
+      }
     }
 
     // Return Selected Tweet
@@ -178,5 +199,25 @@
         $nextTweetAt = round($timeAtRun + (3*(($lookbackInterval/60)/$tweetResultCount))*60);
     }
     return $nextTweetAt;
+  }
+
+
+  /**
+   * generateFollowingDataFile() - [re-]generate the bot following data file
+   * 
+   * Function rebuilds the local cache of accounts the bot is following and writes to file.
+   * 
+   * Existing cache is completely overwritten.
+   */
+  function generateFollowingDataFile() {
+    global $followingDataFile;
+    $followingData = array();
+    $followingDataDetail = getFollowingList();
+    if ($followingDataDetail) {
+      foreach ($followingDataDetail as $followingDetail) {
+        $followingData[] = $followingDetail['id'];
+      }
+    }
+    file_put_contents($followingDataFile, '<?php return ' . var_export($followingData, true) . '; ?>');  
   }
 ?>

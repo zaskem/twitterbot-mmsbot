@@ -30,8 +30,8 @@ A single configuration file resides in the `config/` directory. An example versi
 
 Edit the `bot.php` file as necessary for your configuration.
 
-## Bot Usage, Likes, Retweets, and Crontab Setup
-The bot process has been designed to run on an interval to search Twitter. The bot then evaluates recent original tweets, grabs a random (not previously retweeted) tweet, likes, and retweets the selection via the simple command:
+## Bot Usage, Likes, Retweets, Follows, and Crontab Setup
+The bot process has been designed to run on an interval to search Twitter. The bot then evaluates recent original tweets, grabs a random (not previously retweeted) tweet, follows the original author (if enabled in `bot.php`), likes, and retweets the selection via the simple command:
 `php LikeAndRetweet.php`
 
 The bot is also designed to "self-meter" its own volume of retweets. It will adjust the "next retweet" interval based on the volume of tweets from the previous 1-2 hours (as set in `bot.php`). This basically means if tweet volume is low (e.g. 4 tweets in the last 2 hours) it would only attempt to retweet 1 time in about the same interval. However, if tweet volume is high (e.g. 10 tweets in the last 15 minutes), it would attempt to retweet once every 5 minutes.

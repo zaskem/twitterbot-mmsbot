@@ -443,4 +443,174 @@
     }
   }
 
+
+  /**
+   * getFollowingList() - pull the list of users the bot account is following
+   * 
+   * Used to initially populate the local cache of accounts the bot is following.
+   * Could also be used to periodically refresh the local cache if necessary.
+   * 
+   * @return array of the Twitter following data
+   * @return boolean false for error/empty set
+   */
+  function getFollowingList() {
+    global $twitterBearerToken, $twitterFollowingEndpoint;
+
+    $curl_header = array('Authorization: Bearer '.$twitterBearerToken);
+    // Create/Submit cURL request
+    $curl_request = curl_init();
+    curl_setopt_array($curl_request, array(
+      CURLOPT_URL => $twitterFollowingEndpoint,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_SSL_VERIFYPEER => true,
+      CURLOPT_ENCODING => '',
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => 'GET',
+      CURLOPT_HTTPHEADER => $curl_header,
+    ));
+
+    $json = curl_exec($curl_request);
+    curl_close($curl_request);
+
+    $result = json_decode($json, true);
+    if (array_key_exists("errors", $result)) {
+      return false;
+    } else if (0 == $result['meta']['result_count']) {
+      return false;
+    } else {
+      return $result['data'];
+    }
+  }
+
+
+  /**
+   * followUser($twitterUserId) - follow the account $twitterUserId
+   * 
+   * $twitterUserId: Twitter's unique id of the user account to follow 
+   *
+   * @return boolean of success or failure
+   */
+  function followUser($twitterUserId) {
+    global $twitterApiKey, $twitterApiKeySecret, $authToken, $authToken_secret, $twitterFollowingEndpoint;
+    $timestamp = time();
+    $nonce = getNonce();
+
+    // Create OAuth Signature
+    $oauth_hash = 'oauth_consumer_key='.$twitterApiKey.'&';
+    $oauth_hash .= 'oauth_nonce='.$nonce.'&';
+    $oauth_hash .= 'oauth_signature_method=HMAC-SHA1&';
+    $oauth_hash .= 'oauth_timestamp='.$timestamp.'&';
+    $oauth_hash .= 'oauth_token='.$authToken.'&';
+    $oauth_hash .= 'oauth_version=1.0';
+
+    $base = 'POST&' . rawurlencode($twitterFollowingEndpoint) . '&' .
+      rawurlencode($oauth_hash);
+    $key = rawurlencode($twitterApiKeySecret) . '&' . rawurlencode($authToken_secret);
+    $signature = base64_encode(hash_hmac('sha1', $base, $key, true));
+
+    // Create OAuth Header for cURL
+    $oauth_header = 'oauth_consumer_key="'.rawurlencode($twitterApiKey).'", ';
+    $oauth_header .= 'oauth_nonce="'.$nonce.'", ';
+    $oauth_header .= 'oauth_signature="'.rawurlencode($signature).'", ';
+    $oauth_header .= 'oauth_signature_method="'.rawurlencode('HMAC-SHA1').'", ';
+    $oauth_header .= 'oauth_timestamp="'.$timestamp.'", ';
+    $oauth_header .= 'oauth_token="'.rawurlencode($authToken).'", ';
+    $oauth_header .= 'oauth_version="1.0"';
+
+    $curl_header = array("Authorization: OAuth $oauth_header", 'Content-Type: application/json');
+    
+    // Create/Submit cURL request
+    $curl_request = curl_init();
+    curl_setopt_array($curl_request, array(
+      CURLOPT_URL => $twitterFollowingEndpoint,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_SSL_VERIFYPEER => true,
+      CURLOPT_ENCODING => '',
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => 'POST',
+      CURLOPT_POSTFIELDS =>'{
+        "target_user_id": "'.$twitterUserId.'"
+      }',
+      CURLOPT_HTTPHEADER => $curl_header,
+    ));
+
+    $json = curl_exec($curl_request);
+    curl_close($curl_request);
+
+    if (!array_key_exists("data", json_decode($json))) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+
+  /**
+   * unfollowUser($twitterUserId) - unfollow the account $twitterUserId
+   * 
+   * $twitterUserId: Twitter's unique id of the user account to unfollow  
+   *
+   * @return boolean of success or failure
+   */
+  function unfollowUser($twitterUserId) {
+    global $twitterApiKey, $twitterApiKeySecret, $authToken, $authToken_secret, $twitterFollowingEndpoint;
+    $timestamp = time();
+    $nonce = getNonce();
+    $unfollowUserEndpoint = $twitterFollowingEndpoint . '/' . $twitterUserId;
+
+    // Create OAuth Signature
+    $oauth_hash = 'oauth_consumer_key='.$twitterApiKey.'&';
+    $oauth_hash .= 'oauth_nonce='.$nonce.'&';
+    $oauth_hash .= 'oauth_signature_method=HMAC-SHA1&';
+    $oauth_hash .= 'oauth_timestamp='.$timestamp.'&';
+    $oauth_hash .= 'oauth_token='.$authToken.'&';
+    $oauth_hash .= 'oauth_version=1.0';
+
+    $base = 'DELETE&' . rawurlencode($unfollowUserEndpoint) . '&' .
+      rawurlencode($oauth_hash);
+    $key = rawurlencode($twitterApiKeySecret) . '&' . rawurlencode($authToken_secret);
+    $signature = base64_encode(hash_hmac('sha1', $base, $key, true));
+
+    // Create OAuth Header for cURL
+    $oauth_header = 'oauth_consumer_key="'.rawurlencode($twitterApiKey).'", ';
+    $oauth_header .= 'oauth_nonce="'.$nonce.'", ';
+    $oauth_header .= 'oauth_signature="'.rawurlencode($signature).'", ';
+    $oauth_header .= 'oauth_signature_method="'.rawurlencode('HMAC-SHA1').'", ';
+    $oauth_header .= 'oauth_timestamp="'.$timestamp.'", ';
+    $oauth_header .= 'oauth_token="'.rawurlencode($authToken).'", ';
+    $oauth_header .= 'oauth_version="1.0"';
+
+    $curl_header = array("Authorization: OAuth $oauth_header");
+    
+    // Create/Submit cURL request
+    $curl_request = curl_init();
+    curl_setopt_array($curl_request, array(
+      CURLOPT_URL => $unfollowUserEndpoint,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_SSL_VERIFYPEER => true,
+      CURLOPT_ENCODING => '',
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => 'DELETE',
+      CURLOPT_HTTPHEADER => $curl_header,
+    ));
+
+    $json = curl_exec($curl_request);
+    curl_close($curl_request);
+
+    if (!array_key_exists("data", json_decode($json))) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
 ?>

@@ -39,13 +39,18 @@
 
   // Twitter REST v2 Endpoints
   $twitterUserIdLookupEndpoint = 'https://api.twitter.com/2/users/by';
+  $twitterFollowingEndpoint = 'https://api.twitter.com/2/users/'.$authToken_accountId.'/following';
   $twitterSearchEndpoint = 'https://api.twitter.com/2/tweets/search/recent';
   $twitterCountEndpoint = 'https://api.twitter.com/2/tweets/counts/recent';
   $twitterLikeEndpoint = 'https://api.twitter.com/2/users/'.$authToken_accountId.'/likes';
   $twitterTweetEndpoint = 'https://api.twitter.com/2/tweets';
   $twitterRetweetEndpoint = 'https://api.twitter.com/2/users/'.$authToken_accountId.'/retweets';
 
-  // Tweet Interval/Retweet Data Files
-  $tweetIntervalFile = __DIR__ . '/tweetInterval.php';
+  // Data/Cache file paths
   $tweetDataFile = __DIR__ . '/retweetData.php';
+  $tweetIntervalFile = __DIR__ . '/tweetInterval.php';
+  $followingDataFile = __DIR__ . '/followingData.php';
+
+  // Automatically follow users?
+  $autoFollow = false;
 ?>
