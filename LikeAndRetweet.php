@@ -1,10 +1,25 @@
 <?php
-  require_once(__DIR__ . '/TwitterAPIFunctions.php');
-
   if (php_sapi_name() != 'cli') {
     throw new Exception('This application must be run on the command line.');
   }
 
+  try {
+    if (!file_exists(__DIR__ . '/config/bot.php')) {
+      throw new Exception('Bot Config File (bot.php) not found.');
+    } else {
+      require __DIR__ . '/config/bot.php';
+    }
+    if (!file_exists(__DIR__ . '/TwitterV2API.php')) {
+      throw new Exception('Twitter API Class not found.');
+    } else {
+      require __DIR__ . '/TwitterV2API.php';
+    }
+  } catch (Exception $e) {
+    die($e->getMessage() . " Halting.\n");
+  }
+
+  // Create a Twitter API instance...
+  $twitterAPI = new TwitterV2API();
 
   // Load the interval data file (or create one)...
   if (file_exists($tweetIntervalFile)) {
@@ -18,7 +33,7 @@
   // If we've reached the cadence interval (auto-metering) proceed with a like/retweet
   if (time() >= $nextRetweetAt) {
     // Retrieve Tweets...
-    $tweetDataResults = searchTweets();
+    $tweetDataResults = $twitterAPI->search($twitterSearchDefaults);
     $tweetResultCount = false;
     // We only do something if any results are returned...
     if (false !== $tweetDataResults) {
@@ -44,8 +59,8 @@
 
       // If we were able to find a valid/unused tweet, Like and Retweet
       if (false !== $selectedTweet) {
-        likeTweet($selectedTweet);
-        if (retweetContent($selectedTweet)) {
+        $twitterAPI->like($selectedTweet);
+        if ($twitterAPI->retweet($selectedTweet)) {
           // Add tweet to the used tweet list
           $tweetHistoryData[] = $selectedTweet;
           file_put_contents($tweetDataFile, '<?php return ' . var_export($tweetHistoryData, true) . '; ?>');
@@ -54,7 +69,7 @@
     }
   } else {
     // We just grab the tweet count for the production query (to auto-meter)
-    $tweetResultCount = countTweets();
+    $tweetResultCount = $twitterAPI->count($twitterCountDefaults);
   }
 
 
@@ -99,14 +114,14 @@
    *  - Original tweeting user's profile is NOT set to "Protected";
    *  - [Not Implemented] Original tweeting user has not restricted who can reply.
    * 
-   * $tweetSearchResults - array of results from the `searchTweets()` API function
+   * $tweetSearchResults - array of results from the `$twitterAPI->search($twitterSearchDefaults)` API function
    * $autoFollowUser - boolean (default false) to auto-follow the tweet author (if not already)
    * 
    * @return boolean false (if randomly selected tweet is not usable/valid)
    * @return string/integer of a valid Tweet ID
    */
   function getRandomTweet($tweetSearchResults, $autoFollowUser = false) {
-    global $tweetHistoryData, $tweetResultCount, $followingDataFile;
+    global $twitterAPI, $tweetHistoryData, $tweetResultCount, $followingDataFile;
     $randoTweet = rand(0, $tweetResultCount - 1);
 
     // Tweet Details
@@ -155,7 +170,7 @@
       $followingData = include($followingDataFile);
       // If bot is not already following user, do so (and quietly proceed if follow action fails)...
       if (!in_array($authorId, $followingData)) {
-        $followAction = followUser($authorId);
+        $followAction = $twitterAPI->follow($authorId);
         if ($followAction) {
           $followingData[] = $authorId;
           file_put_contents($followingDataFile, '<?php return ' . var_export($followingData, true) . '; ?>');
@@ -210,9 +225,9 @@
    * Existing cache is completely overwritten.
    */
   function generateFollowingDataFile() {
-    global $followingDataFile;
+    global $twitterAPI, $followingDataFile;
     $followingData = array();
-    $followingDataDetail = getFollowingList();
+    $followingDataDetail = $twitterAPI->following();
     if ($followingDataDetail) {
       foreach ($followingDataDetail as $followingDetail) {
         $followingData[] = $followingDetail['id'];
@@ -220,4 +235,20 @@
     }
     file_put_contents($followingDataFile, '<?php return ' . var_export($followingData, true) . '; ?>');  
   }
+
+
+  /**
+   * injectSearchOverrides(array $needles = null) - rewrite search defaults with overridden paramaters 
+   * 
+   * $needles: array of query parameters to override from the default set (set in `bot.php`), default null
+   */
+  function injectSearchOverrides(array $needles = null) {
+    global $twitterSearchDefaults;
+
+    // Add overridden search needles if provided
+    if (!is_null($needles)) {
+      $twitterSearchDefaults = array_merge($twitterSearchDefaults, $needles);
+    }
+  }
+
 ?>
