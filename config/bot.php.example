@@ -17,9 +17,13 @@
 
   // Data/Cache file paths
   $tweetDataFile = __DIR__ . '/retweetData.php';
+  $activityDetailFile = __DIR__ . '/activityData.php';
   $tweetIntervalFile = __DIR__ . '/tweetInterval.php';
   $followingDataFile = __DIR__ . '/followingData.php';
 
   // Automatically follow users?
   $autoFollow = false;
+
+  // Capture bot activity detail (retweet time, tweet id, search result, lookup attempt/pass in search results)?
+  $logActivity = true;
 ?>

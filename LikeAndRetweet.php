@@ -45,6 +45,14 @@
       } else {
         $tweetHistoryData = array();
       }
+      // Load the activity detail data if enabled...
+      if ($logActivity) {
+        if (file_exists($activityDetailFile)) {
+          $activityDetail = include($activityDetailFile);
+        } else {
+          $activityDetail = array();
+        }
+      }
 
       // Select a random tweet from the result set (try up to $tweetResultCount times)
       $lookupAttempt = 0;
@@ -64,6 +72,10 @@
           // Add tweet to the used tweet list
           $tweetHistoryData[] = $selectedTweet;
           file_put_contents($tweetDataFile, '<?php return ' . var_export($tweetHistoryData, true) . '; ?>');
+          if ($logActivity) {
+            $activityDetail[date('m-d H:i')] = "$selectedTweet (count was $tweetResultCount; lookup attempt $lookupAttempt)";
+            file_put_contents($activityDetailFile, '<?php return ' . var_export($activityDetail, true) . '; ?>');
+          }
         }
       }
     }
