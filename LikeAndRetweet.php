@@ -78,6 +78,9 @@
           }
         }
       }
+
+      // Adjust the tweet result count to account for lookup attempts/duplicate retweets (helps prevent burst retweeting)
+      $tweetResultCount = $tweetResultCount - $lookupAttempt;
     }
   } else {
     // We just grab the tweet count for the production query (to auto-meter)
