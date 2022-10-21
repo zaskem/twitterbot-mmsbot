@@ -286,7 +286,7 @@ class TwitterV2API {
     $this->generateOauthHeader();
     $this->setCurlHeader();
 
-    if (!array_key_exists("data", json_decode($this->curlRequest()))) {
+    if (!array_key_exists("data", json_decode($this->curlRequest(), true))) {
       return false;
     } else {
       return true;
@@ -309,7 +309,7 @@ class TwitterV2API {
     $this->generateOauthHeader();
     $this->setCurlHeader();
 
-    if (!array_key_exists("data", json_decode($this->curlRequest()))) {
+    if (!array_key_exists("data", json_decode($this->curlRequest(), true))) {
       return false;
     } else {
       return true;
@@ -335,7 +335,7 @@ class TwitterV2API {
     $this->generateOauthHeader();
     $this->setCurlHeader();
 
-    if (!array_key_exists("data", json_decode($this->curlRequest()))) {
+    if (!array_key_exists("data", json_decode($this->curlRequest(), true))) {
       return false;
     } else {
       return true;
@@ -358,7 +358,7 @@ class TwitterV2API {
     $this->generateOauthHeader();
     $this->setCurlHeader();
 
-    if (!array_key_exists("data", json_decode($this->curlRequest()))) {
+    if (!array_key_exists("data", json_decode($this->curlRequest(), true))) {
       return false;
     } else {
       return true;
@@ -405,7 +405,7 @@ class TwitterV2API {
     $this->generateOauthHeader();
     $this->setCurlHeader();
 
-    if (!array_key_exists("data", json_decode($this->curlRequest()))) {
+    if (!array_key_exists("data", json_decode($this->curlRequest(), true))) {
       return false;
     } else {
       return true;
@@ -428,7 +428,7 @@ class TwitterV2API {
     $this->generateOauthHeader();
     $this->setCurlHeader();
 
-    if (!array_key_exists("data", json_decode($this->curlRequest()))) {
+    if (!array_key_exists("data", json_decode($this->curlRequest(), true))) {
       return false;
     } else {
       return true;
