@@ -18,6 +18,6 @@ The [GitHub repo](https://github.com/zaskem/twitterbot-mmsbot) contains the basi
 
 ## The MMSMOA Retweet Bot's Future
 ### Updated April 3, 2023
-With Twitter's recent (and terrible) decisions regarding the future of their API, specifically in charging an unrealistic rate for projects like this, it is unclear what future the bot faces. The bot will stay in operation as long as the existing API access does. At the time of this update, Twitter indicates all previous API access will be deprecated by the end of April 2023. With no tweet search capability identified for "free" API access tiers in the New World Order, the bot's automatic functionality will ceaseonce tweet searches via the API are removed...and unfortunately just before MMS 2023 at MOA.
+With Twitter's recent (and terrible) decisions regarding the future of their API, specifically in charging an unrealistic rate for projects like this, it is unclear what future the bot faces. The bot will stay in operation as long as the existing API access does. At the time of this update, Twitter indicates all previous API access will be deprecated by the end of April 2023. With no tweet search capability identified for "free" API access tiers in the New World Order, the bot's automatic functionality will cease once tweet searches via the API are removed...and unfortunately just before MMS 2023 at MOA.
 
 It's been a grand and fun ride indirectly promoting MMS and the content/excitement around it, but Twitter's insistence on burning novelty access to the ground is the death knell for things like this.
