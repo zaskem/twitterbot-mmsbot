@@ -1,4 +1,6 @@
 # MMSMOA Twitter Bot
+___IMPORTANT NOTE:___ The MMSMOA Retweet Bot was officially shut down in late June, 2023 due to Twitter's API changes. As a result this repository has been archived and under no further development.
+
 A [novelty bot](https://twitter.com/mmsmoabot) written in PHP to awareness- and exposure-retweet recent original tagged content (at random) related to the [MMSMOA conference](https://mmsmoa.com/).
 
 Original content is sourced from the [Twitter API v2 Search Recent Tweets](https://developer.twitter.com/en/docs/twitter-api/tweets/search/introduction) API endpoint via selective query parameters.
