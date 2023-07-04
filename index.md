@@ -1,6 +1,8 @@
 # MMSMOA Twitter Bot
 ![MMSMOA bot profile image](mmsbot.png "MMSMOA bot")
 
+___IMPORTANT NOTE:___ The MMSMOA Retweet Bot was officially shut down in late June, 2023 due to Twitter's API changes. As a result this repository has been archived and under no further development.
+
 The [MMSMOA Retweet Bot](https://twitter.com/mmsmoabot) was developed as a novelty bot/project by [@zaskem](https://github.com/zaskem)/[@matt_zaske](https://twitter.com/matt_zaske) to like/retweet original content, randomly selected from recent activity, during the [MMSMOA conference](https://mmsmoa.com/).
 
 The bot process searches for original (e.g. no retweets, quote tweets, or replies) content and, on a self-metered schedule, likes and retweets a randomly-selected match. Not all matching content will be liked/retweeted (not a live-stream bot); the intent is to select one in every 3-4 matches during periods of conference activity.
@@ -21,3 +23,8 @@ The [GitHub repo](https://github.com/zaskem/twitterbot-mmsbot) contains the basi
 With Twitter's recent (and terrible) decisions regarding the future of their API, specifically in charging an unrealistic rate for projects like this, it is unclear what future the bot faces. The bot will stay in operation as long as the existing API access does. At the time of this update, Twitter indicates all previous API access will be deprecated by the end of April 2023. With no tweet search capability identified for "free" API access tiers in the New World Order, the bot's automatic functionality will cease once tweet searches via the API are removed...and unfortunately just before MMS 2023 at MOA.
 
 It's been a grand and fun ride indirectly promoting MMS and the content/excitement around it, but Twitter's insistence on burning novelty access to the ground is the death knell for things like this.
+
+### Final update July, 2023
+In late June, 2023, Twitter's new API access silently took effect, rendering the bot inactive by virtue of not allowing for Tweet searches. On June 28, 2023, the bot services were officially shut down and archived on the managing server. This repository has been archived and under no further development.
+
+I have no intention of deleting the Twitter bot account itself, so past activity of the [MMSMOA Retweet Bot](https://twitter.com/mmsmoabot) will live on as long as Twitter does (unless/until the account is deleted by Twitter).
